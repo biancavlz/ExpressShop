@@ -18,7 +18,8 @@
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
-    "mysql2": "^3.22.5"
+    "mysql2": "^3.22.5",
+    "sequelize": "^6.37.8"
   },
   "allowScripts": {
     "fsevents@2.3.3": true
