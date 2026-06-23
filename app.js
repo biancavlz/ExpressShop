@@ -2,7 +2,7 @@ const path = require("node:path");
 
 const express = require("express");
 const errorController = require("./controllers/error");
-const db = require("./utils/database");
+const sequelize = require("./utils/database");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -22,4 +22,7 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-app.listen(3001);
+sequelize
+  .sync()
+  .then(app.listen(3001))
+  .catch((err) => console.log(err));
