@@ -13,6 +13,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const bodyParser = require("body-parser");
+const { create } = require("node:domain");
 
 const app = express();
 
@@ -58,6 +59,9 @@ sequelize
   })
   .then((user) => {
     // console.log(user);
+    return user.createCart();
+  })
+  .then((cart) => {
     app.listen(3001);
   })
   .catch((err) => console.log(err));
