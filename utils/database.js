@@ -1,11 +1,19 @@
 const mongoose = require("mongoose");
 
+let _db;
+
 const mongoDBConnect = (callback) => {
   mongoose
     .connect(process.env.MONGO_URI)
-    .then((result) => {
+    .then(() => {
       console.log("MongoDB connected");
-      callback(result);
+
+      // Correct way to access native db instance (if you still need it)
+      _db = mongoose.connection.db;
+
+      if (callback) {
+        callback();
+      }
     })
     .catch((error) => {
       console.error("MongoDB connection failed:", error);
@@ -13,4 +21,12 @@ const mongoDBConnect = (callback) => {
     });
 };
 
-module.exports = mongoDBConnect;
+const getDB = () => {
+  if (!_db) {
+    throw new Error("No database found. Make sure MongoDB is connected first.");
+  }
+  return _db;
+};
+
+exports.mongoDBConnect = mongoDBConnect;
+exports.getDB = getDB;
