@@ -8,6 +8,8 @@ const mongoDBConnect = require("./utils/database").mongoDBConnect;
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
+const User = require("./models/user");
+
 const bodyParser = require("body-parser");
 const { create } = require("node:domain");
 
@@ -20,12 +22,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  // User.findByPk(1)
-  //   .then((user) => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch((err) => console.log(err));
+  User.findByPk("6a3d0e81150916e06ed3b95d")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
   next();
 });
 
