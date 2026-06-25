@@ -71,19 +71,16 @@ exports.postEditProduct = (req, res, next) => {
   res.redirect("/admin/products");
 };
 
-// exports.postDeleteProduct = (req, res, next) => {
-//   const prodId = req.body.productId;
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
 
-//   Product.findByPk(prodId)
-//     .then((product) => {
-//       return product.destroy();
-//     })
-//     .then((result) => {
-//       "Product was deleted";
-//       res.redirect("/admin/products");
-//     })
-//     .catch((err) => console.log(err));
-// };
+  Product.deleteById(prodId)
+    .then(() => {
+      "Product was deleted";
+      res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
