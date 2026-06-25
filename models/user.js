@@ -3,13 +3,32 @@ const mongodb = require("mongodb");
 const getDB = require("../utils/database").getDB;
 
 class User {
-  constructor(name, email) {
+  constructor(name, email, cart, id) {
     this.name = name;
     this.email = email;
+    this.cart = cart;
+    this._id = id;
   }
   save() {
     const db = getDB();
     return db.collection("users").insertOne(this);
+  }
+
+  addToCart(product) {
+    // const cartProduct = this.cart.items.findIndex((cp) => {
+    //   return cp._id === product._id;
+    // });
+    product.quantity = 1;
+    const updatedCart = {
+      items: [{ productId: new mongodb.ObjectId(product._id), quantity: 1 }],
+    };
+    const db = getDB();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        { $set: { cart: updatedCart } },
+      );
   }
 
   static findById(userId) {
