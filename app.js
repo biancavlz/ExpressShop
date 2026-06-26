@@ -22,9 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  User.findById("6a3d23d586dcb1fe90d47807")
+  User.findById("6a3e4de333135a8302288e37")
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => console.log(err));
@@ -36,5 +36,18 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoDBConnect(() => {
+  User.findOne().then((user) => {
+    if (!user) {
+      const user = new User({
+        name: "John Doe",
+        email: "john.doe@test.com",
+        cart: {
+          items: [],
+        },
+      });
+      user.save();
+    }
+  });
+
   app.listen(3001);
 });
