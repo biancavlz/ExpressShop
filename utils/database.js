@@ -1,22 +1,32 @@
-require("dotenv").config();
+const mongoose = require("mongoose");
 
-const { Sequelize } = require("sequelize");
+let _db;
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-    pool: {
-      max: 10,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-    logging: false,
-  },
-);
+const mongoDBConnect = (callback) => {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("MongoDB connected");
 
-module.exports = sequelize;
+      // Correct way to access native db instance (if you still need it)
+      _db = mongoose.connection.db;
+
+      if (callback) {
+        callback();
+      }
+    })
+    .catch((error) => {
+      console.error("MongoDB connection failed:", error);
+      process.exit(1);
+    });
+};
+
+const getDB = () => {
+  if (!_db) {
+    throw new Error("No database found. Make sure MongoDB is connected first.");
+  }
+  return _db;
+};
+
+exports.mongoDBConnect = mongoDBConnect;
+exports.getDB = getDB;
