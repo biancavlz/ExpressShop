@@ -21,12 +21,4 @@ const mongoDBConnect = (callback) => {
     });
 };
 
-const getDB = () => {
-  if (!_db) {
-    throw new Error("No database found. Make sure MongoDB is connected first.");
-  }
-  return _db;
-};
-
 exports.mongoDBConnect = mongoDBConnect;
-exports.getDB = getDB;
