@@ -2,6 +2,8 @@ require("dotenv").config();
 const path = require("node:path");
 
 const express = require("express");
+const session = require("express-session");
+
 const errorController = require("./controllers/error");
 const mongoDBConnect = require("./utils/database").mongoDBConnect;
 
@@ -21,6 +23,19 @@ app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: process.env.EXPRESS_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+
+app.use((req, res, next) => {
+  // req.isLoggedIn = req.session.isLoggedIn;
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  next();
+});
 
 app.use((req, res, next) => {
   User.findById("6a3e4de333135a8302288e37")
