@@ -3,6 +3,7 @@ const path = require("node:path");
 
 const express = require("express");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const mongoDBConnect = require("./utils/database").mongoDBConnect;
@@ -18,6 +19,11 @@ const { create } = require("node:domain");
 
 const app = express();
 
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: "sessions",
+});
+
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -28,6 +34,7 @@ app.use(
     secret: process.env.EXPRESS_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: store,
   }),
 );
 
