@@ -9,10 +9,15 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById("6a3e4de333135a8302288e37")
+  // User.findById(req.session.user)
+  // User.findById("6a3e4de333135a8302288e37")
+  User.findOne()
     .then((user) => {
+      if (!user) {
+        return res.redirect("/login");
+      }
       req.session.isLoggedIn = true;
-      // req.session.user = user;
+      // req.session.usser = user;
 
       req.user = user._id;
       req.session.save((err) => {
@@ -33,7 +38,30 @@ exports.postLogout = (req, res, next) => {
   });
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+
+  User.findOne({ email: email })
+    .then((userDoc) => {
+      if (userDoc) {
+        return res.redirect("/signup");
+      }
+
+      const user = new User({
+        email: email,
+        password: password,
+        cart: { items: [] },
+      });
+
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
