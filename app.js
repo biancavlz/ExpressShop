@@ -39,7 +39,6 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  // req.isLoggedIn = req.session.isLoggedIn;
   res.locals.isAuthenticated = req.session.isLoggedIn;
   next();
 });
