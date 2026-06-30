@@ -4,6 +4,7 @@ const path = require("node:path");
 const express = require("express");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
 const mongoDBConnect = require("./utils/database").mongoDBConnect;
@@ -37,6 +38,8 @@ app.use(
     store: store,
   }),
 );
+
+app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
