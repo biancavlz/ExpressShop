@@ -81,6 +81,7 @@ exports.postSignup = (req, res, next) => {
       pageTitle: "Signup",
       errorMessage: errors.array()[0].msg,
       oldInput: { email: email, password: password },
+      validationErrors: errors.array(),
     });
   }
 
@@ -111,5 +112,6 @@ exports.getSignup = (req, res, next) => {
     pageTitle: "Signup",
     errorMessage: message,
     oldInput: { email: "", password: "" },
+    validationErrors: [],
   });
 };
