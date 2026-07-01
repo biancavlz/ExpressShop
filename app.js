@@ -3,7 +3,8 @@ const path = require("node:path");
 
 const express = require("express");
 const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
+const MongoDBStore = require("connect-mongo").default;
+
 const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
@@ -20,22 +21,21 @@ const { create } = require("node:domain");
 
 const app = express();
 
-const store = new MongoDBStore({
-  uri: process.env.MONGO_URI,
-  collection: "sessions",
-});
-
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(
   session({
     secret: process.env.EXPRESS_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: store,
+    store: MongoDBStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
   }),
 );
 
