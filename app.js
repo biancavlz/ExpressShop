@@ -4,6 +4,7 @@ const path = require("node:path");
 const express = require("express");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
 const mongoDBConnect = require("./utils/database").mongoDBConnect;
@@ -38,19 +39,19 @@ app.use(
   }),
 );
 
+app.use(flash());
+
 app.use((req, res, next) => {
-  // req.isLoggedIn = req.session.isLoggedIn;
   res.locals.isAuthenticated = req.session.isLoggedIn;
   next();
 });
 
 app.use((req, res, next) => {
-  // if (!req.session.user) {
-  //   return next();
-  // }
-  // User.findById(req.session.user._id)
+  if (!req.session.user) {
+    return next();
+  }
 
-  User.findById("6a3e4de333135a8302288e37")
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -65,18 +66,5 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoDBConnect(() => {
-  User.findOne().then((user) => {
-    if (!user) {
-      const user = new User({
-        name: "John Doe",
-        email: "john.doe@test.com",
-        cart: {
-          items: [],
-        },
-      });
-      user.save();
-    }
-  });
-
   app.listen(3001);
 });
