@@ -181,7 +181,28 @@ exports.getInvoice = (req, res, next) => {
       pdfDoc.pipe(fs.createWriteStream(invoicePath));
       pdfDoc.pipe(res);
 
-      pdfDoc.text("hello world");
+      pdfDoc.fontSize(20).text("Invoice", {
+        underline: true,
+      });
+      pdfDoc.fontSize(14).text("-------------------------");
+
+      let totalPrice = 0;
+      order.products.forEach((prod) => {
+        totalPrice = totalPrice + prod.quantity * prod.product.price;
+
+        pdfDoc
+          .fontSize(14)
+          .text(
+            prod.product.title +
+              " - " +
+              prod.quantity +
+              "x" +
+              "$" +
+              prod.product.price,
+          );
+      });
+      pdfDoc.fontSize(14).text("-------------------------");
+      pdfDoc.fontSize(20).text("TotalPrice: $" + totalPrice);
       pdfDoc.end();
     })
     .catch((err) => next(err));
