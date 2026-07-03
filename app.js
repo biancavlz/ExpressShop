@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongo").default;
 
 const flash = require("connect-flash");
+const multer = require("multer");
 
 const errorController = require("./controllers/error");
 const mongoDBConnect = require("./utils/database").mongoDBConnect;
@@ -16,6 +17,14 @@ const authRoutes = require("./routes/auth");
 
 const User = require("./models/user");
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
 const bodyParser = require("body-parser");
 const { create } = require("node:domain");
 
@@ -25,6 +34,8 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage }).single("image"));
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
