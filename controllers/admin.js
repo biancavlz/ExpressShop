@@ -45,7 +45,6 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: title,
-        imageUrl: imageUrl,
         price: price,
         description: description,
       },
@@ -109,7 +108,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedDescription = req.body.description;
   const updatedPrice = req.body.price;
 
@@ -123,7 +122,6 @@ exports.postEditProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription,
         _id: prodId,
@@ -139,7 +137,10 @@ exports.postEditProduct = (req, res, next) => {
         res.redirect("/");
       }
       product.title = updatedTitle;
-      product.imageUrl = updatedImageUrl;
+
+      if (image) {
+        product.imageUrl = image.path;
+      }
       product.description = updatedDescription;
       product.price = updatedPrice;
 
